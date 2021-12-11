@@ -21,11 +21,11 @@
                    [width 700] 
                    [height 500]))
 
-(define canvas (new editor-canvas% [parent frame]))
+(define canvas (new editor-canvas% 
+                    [parent frame]
+                    [style (list 'auto-hscroll 'auto-vscroll)]))
+
 (define text (new text%))
-(send canvas set-editor text)
-
-
 
 (define menu-bar (new menu-bar% [parent frame]))
 
@@ -34,7 +34,7 @@
                        [parent menu-bar]))
 
 (new menu-item%
-     [label "Open file"]
+     [label "Open"]
      [parent file-menu]
      [callback (lambda (menu event) 
                  (define file-string-content  
@@ -44,6 +44,19 @@
                  ;Ideia: Abrir nova guia seria uma boa
                  ;(send text delete 'start 'back)
                  (send text insert file-string-content))])
+
+(new menu-item%
+     [label "Save"]
+     [parent file-menu]
+     [callback (lambda (menu event)
+                 (define path-to-write (put-file))
+                 (define current-file-text (send text get-text))
+                 (define out (open-output-file path-to-write))
+                 (display current-file-text out)
+                 (close-output-port out)
+                 )])
+
+
 
 (define theme-menu (new menu%
                         [label "Theme"]
@@ -63,8 +76,7 @@
                  (set-canvas-background-color canvas 40 42 54)
                  (set-text-color text 248 248 242))])
 
-
+(send canvas set-editor text)
 (set-canvas-background-color canvas 40 42 54)
 (set-text-color text 248 248 242)
-
 (send frame show #t)
