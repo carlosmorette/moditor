@@ -1,7 +1,5 @@
 #lang racket/gui
 
-; Ideias: Alterar tamanho da fonte
-
 (define (set-canvas-background-color canvas-object r g b)
   (define color-to-canvas-background (make-object color%))
   (send color-to-canvas-background set r g b)
@@ -17,19 +15,21 @@
 
 
 (define frame (new frame% 
-                   [label "Rktor"] 
+                   [label "moditor"] 
                    [width 700] 
                    [height 500]))
 
-(define canvas (new editor-canvas% 
-                    [parent frame]
-                    [style (list 'auto-hscroll 'auto-vscroll)]))
-
 (define text (new text%))
 
-(define menu-bar (new menu-bar% [parent frame]))
+(define canvas (new editor-canvas% 
+                    [parent frame]
+                    [editor text]
+                    [style (list 'auto-hscroll)]))
 
-(define file-menu (new menu%
+(define menu-bar (new menu-bar% 
+                      [parent frame]))
+
+(define file-menu (new menu% 
                        [label "File"]
                        [parent menu-bar]))
 
@@ -40,9 +40,6 @@
                  (define file-string-content  
                    (file->string (path->string (get-file))))
 
-                 ;TODO: Deletar conteudo existente no arquivo
-                 ;Ideia: Abrir nova guia seria uma boa
-                 ;(send text delete 'start 'back)
                  (send text insert file-string-content))])
 
 (new menu-item%
@@ -56,8 +53,6 @@
                  (close-output-port out)
                  )])
 
-
-
 (define theme-menu (new menu%
                         [label "Theme"]
                         [parent menu-bar]))
@@ -66,17 +61,17 @@
      [label "Theme 1"]
      [parent theme-menu]
      [callback (lambda (menu event) 
-                 (set-canvas-background-color canvas 0 0 0)
-                 (set-text-color text 255 255 255))])
+                 (set-canvas-background-color canvas 40 42 54)
+                 (set-text-color text 248 248 242))])
 
 (new menu-item%
      [label "Theme 2"]
      [parent theme-menu]
      [callback (lambda (menu event) 
-                 (set-canvas-background-color canvas 40 42 54)
-                 (set-text-color text 248 248 242))])
+                 (set-canvas-background-color canvas 0 0 0)
+                 (set-text-color text 255 255 255))])
 
-(send canvas set-editor text)
 (set-canvas-background-color canvas 40 42 54)
 (set-text-color text 248 248 242)
 (send frame show #t)
+
